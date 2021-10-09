@@ -1,0 +1,23 @@
+{
+    "name": "ksoftm/mini-data",
+    "description": "content database easily",
+    "type": "library",
+    "require": {
+        "php": "^8.0",
+        "ksoftm/utility": "0.1.7"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "KsoftM",
+            "email": "ksoftmanagement@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "ksoftm\\system\\": "./src"
+        }
+    },
+    "version": "0.1.2"
+}
