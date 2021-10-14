@@ -13,7 +13,6 @@ use PDO;
  */
 class RawQuery extends BaseQuery
 {
-
     //<<----------->> DATA TYPES FOR RAW QUERY <<----------->>//
 
     public const DATA_TYPE_TINYTEXT = 'TINYTEXT';
