@@ -42,7 +42,7 @@ class MySQLDataDrive implements IDataDrive
 
     public static function getConfidential(): array
     {
-        return ['username' => self::$username, 'password' => self::$password];
+        return ['username' => self::$username ?? '', 'password' => self::$password ?? ''];
     }
 
     public function getDatabase(): string

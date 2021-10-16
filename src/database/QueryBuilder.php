@@ -4,11 +4,13 @@ namespace ksoftm\system\database;
 
 use PDO;
 use ksoftm\system\MDQ;
-use ksoftm\system\internal\DResult;
-use ksoftm\system\internal\BaseQuery;
 use ksoftm\system\internal\Column;
-use ksoftm\system\utils\datatype\Dictionary;
+use ksoftm\system\internal\DResult;
+use ksoftm\system\database\RawQuery;
+use ksoftm\system\internal\BaseQuery;
 use ksoftm\system\utils\datatype\ListData;
+use ksoftm\system\utils\datatype\Dictionary;
+
 
 class QueryBuilder
 {
@@ -170,9 +172,7 @@ class QueryBuilder
 
         $tmp = null;
 
-        if (
-            strpos($query, '?') != false && !empty($data)
-        ) {
+        if (strpos($query, '?') != false && !empty($data)) {
 
             foreach ($data as $key => $value) {
                 if (strpos($key, ':') == false) {
@@ -203,6 +203,7 @@ class QueryBuilder
                 }
             }, $data);
         }
+        
 
         $pdoStatement->execute();
 
@@ -232,16 +233,11 @@ class QueryBuilder
 
         if (preg_match_all('/[{][\s\w|\W]*([^}]*)[}]/miU', self::$template, $syntax)) {
 
-            if (
-                !empty($syntax) && !is_null($syntax) && $syntax != false
-            ) {
+            if (!empty($syntax) && !is_null($syntax) && $syntax != false) {
 
                 //* map the array to make base query
                 $returnData = self::templateMapping($query, $syntax);
-                echo '<pre>';
-                var_dump(self::$template);
-                echo '</pre>';
-                // exit;
+
                 // * build the query data
                 return self::query(self::$template, $returnData);
             }
@@ -259,63 +255,63 @@ class QueryBuilder
 
         switch ($mode) {
                 // create table
-            case QueryBuilder::TABLE_CREATE_MODE:
+            case self::TABLE_CREATE_MODE:
                 self::$template = sprintf(
                     "create table {%s} %s ({%s}) %s",
-                    QueryBuilder::OPTION_TYPE,
+                    self::OPTION_TYPE,
                     $db_table,
-                    QueryBuilder::COLUMN_TYPE,
+                    self::COLUMN_TYPE,
                     self::tableEnginContent()
                 );
                 break;
                 // drop table
-            case QueryBuilder::TABLE_DROP_MODE:
+            case self::TABLE_DROP_MODE:
                 self::$template = sprintf(
                     "drop table {%s} %s",
-                    QueryBuilder::OPTION_TYPE,
+                    self::OPTION_TYPE,
                     $db_table,
                 );
                 break;
                 // select table data
-            case QueryBuilder::SELECT_QUERY_MODE:
+            case self::SELECT_QUERY_MODE:
                 self::$template = sprintf(
                     "select {%s} {%s} from %s {%s} {%s} {%s} {%s} {%s} {%s}",
-                    QueryBuilder::OPTION_TYPE,
-                    QueryBuilder::FIELD_TYPE,
+                    self::OPTION_TYPE,
+                    self::FIELD_TYPE,
                     $db_table,
-                    QueryBuilder::JOIN_TYPE,
-                    QueryBuilder::WHERE_TYPE,
-                    QueryBuilder::GROUP_TYPE,
-                    QueryBuilder::HAVING_TYPE,
-                    QueryBuilder::ORDER_TYPE,
-                    QueryBuilder::LIMIT_TYPE
+                    self::JOIN_TYPE,
+                    self::WHERE_TYPE,
+                    self::GROUP_TYPE,
+                    self::HAVING_TYPE,
+                    self::ORDER_TYPE,
+                    self::LIMIT_TYPE
                 );
                 break;
                 // insert table data
-            case QueryBuilder::INSERT_QUERY_MODE:
+            case self::INSERT_QUERY_MODE:
                 self::$template = sprintf(
                     "insert {%s} into %s {%s}",
-                    QueryBuilder::OPTION_TYPE,
+                    self::OPTION_TYPE,
                     $db_table,
-                    QueryBuilder::SET_TYPE
+                    self::SET_TYPE
                 );
                 break;
                 // delete table data
-            case QueryBuilder::DELETE_QUERY_MODE:
+            case self::DELETE_QUERY_MODE:
                 self::$template = sprintf(
                     "delete from %s {%s} {%s}",
                     $db_table,
-                    QueryBuilder::WHERE_TYPE,
-                    QueryBuilder::HAVING_TYPE,
+                    self::WHERE_TYPE,
+                    self::HAVING_TYPE,
                 );
                 break;
                 // update table data
-            case QueryBuilder::UPDATE_QUERY_MODE:
+            case self::UPDATE_QUERY_MODE:
                 self::$template = sprintf(
                     "update %s {%s} {%s}",
                     $db_table,
-                    QueryBuilder::SET_TYPE,
-                    QueryBuilder::WHERE_TYPE,
+                    self::SET_TYPE,
+                    self::WHERE_TYPE,
                 );
                 break;
             default:
@@ -355,31 +351,31 @@ class QueryBuilder
 
     private static function loadRender(string $type, BaseQuery $query): null|array|string
     {
-        if ($type == QueryBuilder::SET_TYPE) {
+        if ($type == self::SET_TYPE) {
             return self::setRender($query, $query->getQueryMode());
-        } elseif ($type == QueryBuilder::FIELD_TYPE) {
+        } elseif ($type == self::FIELD_TYPE) {
             if (
-                $query->getQueryMode() == QueryBuilder::SELECT_QUERY_MODE &&
+                $query->getQueryMode() == self::SELECT_QUERY_MODE &&
                 is_null(self::fieldRender($query))
             ) {
-                return QueryBuilder::DEFAULT_FIELD;
+                return self::DEFAULT_FIELD;
             }
             return self::fieldRender($query);
-        } elseif ($type == QueryBuilder::GROUP_TYPE) {
+        } elseif ($type == self::GROUP_TYPE) {
             return self::groupRender($query);
-        } elseif ($type == QueryBuilder::LIMIT_TYPE) {
+        } elseif ($type == self::LIMIT_TYPE) {
             return self::limitRender($query);
-        } elseif ($type == QueryBuilder::ORDER_TYPE) {
+        } elseif ($type == self::ORDER_TYPE) {
             return self::orderRender($query);
-        } elseif ($type == QueryBuilder::WHERE_TYPE) {
+        } elseif ($type == self::WHERE_TYPE) {
             return self::whereRender($query);
-        } elseif ($type == QueryBuilder::HAVING_TYPE) {
+        } elseif ($type == self::HAVING_TYPE) {
             return self::havingRender($query);
-        } elseif ($type == QueryBuilder::OPTION_TYPE) {
+        } elseif ($type == self::OPTION_TYPE) {
             return self::optionRender($query);
-        } elseif ($type == QueryBuilder::JOIN_TYPE) {
+        } elseif ($type == self::JOIN_TYPE) {
             return self::joinRender($query);
-        } elseif ($type == QueryBuilder::COLUMN_TYPE) {
+        } elseif ($type == self::COLUMN_TYPE) {
             return self::columnsRender($query);
         }
 
@@ -389,7 +385,7 @@ class QueryBuilder
     protected static function setRender(BaseQuery $query, $mode): ?array
     {
         // get the correct arguments form the query
-        $data = $query->argument->getValue(QueryBuilder::SET_TYPE);
+        $data = $query->argument->getValue(self::SET_TYPE);
 
 
         if ($data instanceof ListData) {
@@ -398,10 +394,8 @@ class QueryBuilder
             // get the parameter value set
             $param = array_map(fn ($set) => $set[1], $data);
 
-
-
             // make final process depend on the mode [insert,update]
-            if ($mode == QueryBuilder::INSERT_QUERY_MODE) {
+            if ($mode == self::INSERT_QUERY_MODE) {
                 $tmp = array_map(fn ($set) => $set[0], $data);
 
                 $res = array_map(
@@ -446,7 +440,7 @@ class QueryBuilder
                     ),
                     $param
                 ];
-            } elseif ($mode == QueryBuilder::UPDATE_QUERY_MODE) {
+            } elseif ($mode == self::UPDATE_QUERY_MODE) {
                 $tmp = array_map(fn ($set) => $set[0], $data);
                 $output = [
                     sprintf('set %s', implode(', ', $tmp)),
@@ -459,7 +453,7 @@ class QueryBuilder
 
     protected static function fieldRender(BaseQuery $query): ?string
     {
-        $output = $query->argument->getValue(QueryBuilder::FIELD_TYPE);
+        $output = $query->argument->getValue(self::FIELD_TYPE);
 
         if ($output instanceof ListData) {
             $output = implode(', ', $output->getEach(fn ($v) => $v));
@@ -472,7 +466,7 @@ class QueryBuilder
 
     protected static function groupRender(BaseQuery $query): ?string
     {
-        $output = $query->argument->getValue(QueryBuilder::GROUP_TYPE);
+        $output = $query->argument->getValue(self::GROUP_TYPE);
 
         if (!empty($output)) {
             return trim('group by ' . implode(', ', is_array($output) ?: [$output]));
@@ -482,7 +476,7 @@ class QueryBuilder
 
     protected static function limitRender(BaseQuery $query): ?string
     {
-        [$count, $limit] = $query->argument->getValue(QueryBuilder::LIMIT_TYPE);
+        [$count, $limit] = $query->argument->getValue(self::LIMIT_TYPE);
 
         $output = '';
 
@@ -498,7 +492,7 @@ class QueryBuilder
 
     protected static function orderRender(BaseQuery $query): ?string
     {
-        $output = $query->argument->getValue(QueryBuilder::ORDER_TYPE);
+        $output = $query->argument->getValue(self::ORDER_TYPE);
         if ($output instanceof Dictionary) {
             // $output = array_map(fn ($field) => implode(
             //     ' ',
@@ -527,17 +521,17 @@ class QueryBuilder
 
     private static function whereRender(BaseQuery $query): ?array
     {
-        return self::condition($query, QueryBuilder::WHERE_TYPE);
+        return self::condition($query, self::WHERE_TYPE);
     }
 
     private static function havingRender(BaseQuery $query): ?array
     {
-        return self::condition($query, QueryBuilder::HAVING_TYPE);
+        return self::condition($query, self::HAVING_TYPE);
     }
 
     protected static function optionRender(BaseQuery $query): ?string
     {
-        $output = $query->argument->getValue(QueryBuilder::OPTION_TYPE);
+        $output = $query->argument->getValue(self::OPTION_TYPE);
 
         if (!empty($output)) {
             if (array_key_exists($query->getQueryMode(), $output)) {
@@ -561,7 +555,7 @@ class QueryBuilder
             'mainTable' => $mainTable,
             'foreignKey' => $foreignKey,
             'mainKey' => $mainKey
-        ] = $query->argument->getValue(QueryBuilder::JOIN_TYPE);
+        ] = $query->argument->getValue(self::JOIN_TYPE);
 
         if (!empty($d)) {
             if (!empty($joinType)) {
@@ -591,11 +585,20 @@ class QueryBuilder
 
     public static function columnsRender(BaseQuery $query): string
     {
-        $coll = $query->argument->getValue(QueryBuilder::COLUMN_TYPE);
+        $coll = $query->argument->getValue(self::COLUMN_TYPE);
 
         if ($coll instanceof ListData) {
+            $primaryKey = [];
+            $normalKey = [];
+            $indexKey = [];
+            $foreignKey = new Dictionary;
 
-            $coll = $coll->getEach(function (Column $list) {
+            $coll = $coll->getEach(function (Column $list) use (
+                &$primaryKey,
+                &$normalKey,
+                &$indexKey,
+                &$foreignKey,
+            ) {
                 $cols[] = self::colRender($list);
 
                 // get all the primary key id
@@ -636,39 +639,40 @@ class QueryBuilder
                     }
                     $f->removeKey('foreignKey');
                     $f->add('foreignKey', $fKey);
-                    $foreignKey = $f;
                 }
+                $foreignKey = $f;
 
-                if (!empty($primaryKey)) {
-                    $cols[] = sprintf("primary key (%s)", implode(',', $primaryKey));
-                }
-
-                if (!empty($normalKey)) {
-                    foreach ($normalKey as $value) {
-                        $cols[] = sprintf("key %s (%s)", "idx_fk_$value", $value);
-                    }
-                }
-
-                if (!empty($indexKey)) {
-                    foreach ($indexKey as $value) {
-                        $cols[] = sprintf("index %s (%s)", "idx_$value", $value);
-                    }
-                }
-
-                // KEY `idx_fk_country_id` (`country_id`), CONSTRAINT `fk_city_country` 
-                if (!empty($foreignKey)) {
-                    $cols[] = sprintf(
-                        "foreign key(%s) references %s.%s %s %s",
-                        $foreignKey->getValue('mainKey'),
-                        self::$database,
-                        $foreignKey->getValue('foreignKey'),
-                        $foreignKey->getValue('onDelete'),
-                        $foreignKey->getValue('onUpdate'),
-
-                    );
-                }
                 return PHP_EOL . implode("," . PHP_EOL, $cols);
             });
+
+            if (!empty($primaryKey)) {
+                $coll[] = sprintf("\nprimary key (%s)\n", implode(',', $primaryKey));
+            }
+
+            if (!empty($normalKey)) {
+                foreach ($normalKey as $value) {
+                    $coll[] = sprintf("\nkey %s (%s)\n", "idx_fk_$value", $value);
+                }
+            }
+
+            if (!empty($indexKey)) {
+                foreach ($indexKey as $value) {
+                    $coll[] = sprintf("\nindex %s (%s)\n", "idx_$value", $value);
+                }
+            }
+
+            // KEY `idx_fk_country_id` (`country_id`), CONSTRAINT `fk_city_country` 
+            if (!empty($foreignKey)) {
+                $coll[] = sprintf(
+                    "foreign key(%s) references %s.%s %s %s",
+                    $foreignKey->getValue('mainKey'),
+                    self::$database,
+                    $foreignKey->getValue('foreignKey'),
+                    $foreignKey->getValue('onDelete'),
+                    $foreignKey->getValue('onUpdate'),
+
+                );
+            }
             return implode(",", $coll);
         }
         return '';

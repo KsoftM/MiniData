@@ -2,11 +2,10 @@
 
 namespace ksoftm\system\database;
 
-use Closure;
 use ksoftm\system\internal\Column;
 use ksoftm\system\internal\BaseQuery;
+use ksoftm\system\database\QueryBuilder;
 use ksoftm\system\utils\datatype\ListData;
-use PDO;
 
 /**
  * This class ues to create, insert, update, delete, join, ect... the table
@@ -86,7 +85,7 @@ class RawQuery extends BaseQuery
     public function tinyText(string $name): ?Column
     {
         if (!empty($name)) {
-            $tmp = new Column($name, RawQuery::DATA_TYPE_TINYTEXT);
+            $tmp = new Column($name, self::DATA_TYPE_TINYTEXT);
             $this->setColumns($tmp);
         }
         return $tmp ?? null;
@@ -102,7 +101,7 @@ class RawQuery extends BaseQuery
     public function mediumText(string $name): ?Column
     {
         if (!empty($name)) {
-            $tmp = new Column($name, RawQuery::DATA_TYPE_MEDIUMTEXT);
+            $tmp = new Column($name, self::DATA_TYPE_MEDIUMTEXT);
             $this->setColumns($tmp);
         }
         return $tmp ?? null;
@@ -123,7 +122,7 @@ class RawQuery extends BaseQuery
         }
 
         if (!empty($name)) {
-            $tmp = new Column($name, RawQuery::DATA_TYPE_VARCHAR . "($length)");
+            $tmp = new Column($name, self::DATA_TYPE_VARCHAR . "($length)");
             $this->setColumns($tmp);
         }
         return $tmp ?? null;
@@ -144,7 +143,7 @@ class RawQuery extends BaseQuery
         }
 
         if (!empty($name)) {
-            $tmp = new Column($name, RawQuery::DATA_TYPE_TEXT . "($length)");
+            $tmp = new Column($name, self::DATA_TYPE_TEXT . "($length)");
             $this->setColumns($tmp);
         }
         return $tmp ?? null;
@@ -160,7 +159,7 @@ class RawQuery extends BaseQuery
     public function longText(string $name): ?Column
     {
         if (!empty($name)) {
-            $tmp = new Column($name, RawQuery::DATA_TYPE_LONGTEXT);
+            $tmp = new Column($name, self::DATA_TYPE_LONGTEXT);
             $this->setColumns($tmp);
         }
         return $tmp ?? null;
@@ -169,7 +168,7 @@ class RawQuery extends BaseQuery
     public function jsonText(string $name): ?Column
     {
         if (!empty($name)) {
-            $tmp = new Column($name, RawQuery::DATA_TYPE_JSON);
+            $tmp = new Column($name, self::DATA_TYPE_JSON);
             $this->setColumns($tmp);
         }
         return $tmp ?? null;
@@ -185,7 +184,7 @@ class RawQuery extends BaseQuery
     public function boolean(string $name): ?Column
     {
         if (!empty($name)) {
-            $tmp = new Column($name, RawQuery::DATA_TYPE_BOOLEAN);
+            $tmp = new Column($name, self::DATA_TYPE_BOOLEAN);
             $this->setColumns($tmp);
         }
         return $tmp ?? null;
@@ -201,7 +200,7 @@ class RawQuery extends BaseQuery
     public function tinyInteger(string $name): ?Column
     {
         if (!empty($name)) {
-            $tmp = new Column($name, RawQuery::DATA_TYPE_TINYINT);
+            $tmp = new Column($name, self::DATA_TYPE_TINYINT);
             $this->setColumns($tmp);
         }
         return $tmp ?? null;
@@ -217,7 +216,7 @@ class RawQuery extends BaseQuery
     public function smallInteger(string $name): ?Column
     {
         if (!empty($name)) {
-            $tmp = new Column($name, RawQuery::DATA_TYPE_SMALLINT);
+            $tmp = new Column($name, self::DATA_TYPE_SMALLINT);
             $this->setColumns($tmp);
         }
         return $tmp ?? null;
@@ -233,7 +232,7 @@ class RawQuery extends BaseQuery
     public function mediumInteger(string $name): ?Column
     {
         if (!empty($name)) {
-            $tmp = new Column($name, RawQuery::DATA_TYPE_MEDIUMINT);
+            $tmp = new Column($name, self::DATA_TYPE_MEDIUMINT);
             $this->setColumns($tmp);
         }
         return $tmp ?? null;
@@ -249,7 +248,7 @@ class RawQuery extends BaseQuery
     public function integer(string $name): ?Column
     {
         if (!empty($name)) {
-            $tmp = new Column($name, RawQuery::DATA_TYPE_INTEGER);
+            $tmp = new Column($name, self::DATA_TYPE_INTEGER);
             $this->setColumns($tmp);
         }
 
@@ -266,7 +265,7 @@ class RawQuery extends BaseQuery
     public function bigInteger(string $name): ?Column
     {
         if (!empty($name)) {
-            $tmp = new Column($name, RawQuery::DATA_TYPE_BIGINT);
+            $tmp = new Column($name, self::DATA_TYPE_BIGINT);
             $this->setColumns($tmp);
         }
 
@@ -317,7 +316,7 @@ class RawQuery extends BaseQuery
      */
     public function float(string $name, int $total = null, int $decimals = null): ?Column
     {
-        return $this->floatingValue(RawQuery::DATA_TYPE_FLOAT, $name, $total, $decimals);
+        return $this->floatingValue(self::DATA_TYPE_FLOAT, $name, $total, $decimals);
     }
 
     /**
@@ -331,7 +330,7 @@ class RawQuery extends BaseQuery
      */
     public function double(string $name, int $total = null, int $decimals = null): ?Column
     {
-        return $this->floatingValue(RawQuery::DATA_TYPE_DOUBLE, $name, $total, $decimals);
+        return $this->floatingValue(self::DATA_TYPE_DOUBLE, $name, $total, $decimals);
     }
 
     /**
@@ -345,7 +344,7 @@ class RawQuery extends BaseQuery
      */
     public function decimal(string $name, int $total = null, int $decimals = null): ?Column
     {
-        return $this->floatingValue(RawQuery::DATA_TYPE_DECIMAL, $name, $total, $decimals);
+        return $this->floatingValue(self::DATA_TYPE_DECIMAL, $name, $total, $decimals);
     }
 
     /**
@@ -358,7 +357,7 @@ class RawQuery extends BaseQuery
     public function date(string $name): ?Column
     {
         if (!empty($name)) {
-            $tmp = new Column($name, RawQuery::DATA_TYPE_DATE);
+            $tmp = new Column($name, self::DATA_TYPE_DATE);
             $this->setColumns($tmp);
         }
         return $tmp;
@@ -374,7 +373,7 @@ class RawQuery extends BaseQuery
     public function time(string $name): ?Column
     {
         if (!empty($name)) {
-            $tmp = new Column($name, RawQuery::DATA_TYPE_TIME);
+            $tmp = new Column($name, self::DATA_TYPE_TIME);
             $this->setColumns($tmp);
         }
         $this->setColumns($tmp);
@@ -389,14 +388,10 @@ class RawQuery extends BaseQuery
      *
      * @return \ksoftm\system\internal\Column
      */
-    public function year(string $name, $length = 4): ?Column
+    public function year(string $name): ?Column
     {
-        if (empty($length) || $length <= 0) {
-            $length = 4;
-        }
-
         if (!empty($name)) {
-            $tmp = new Column($name, RawQuery::DATA_TYPE_YEAR . "($length)");
+            $tmp = new Column($name, self::DATA_TYPE_YEAR);
             $this->setColumns($tmp);
         }
         return $tmp;
@@ -419,7 +414,7 @@ class RawQuery extends BaseQuery
         if (!empty($name)) {
             $tmp = new Column(
                 $name,
-                empty($length) ? RawQuery::DATA_TYPE_DATETIME : RawQuery::DATA_TYPE_DATETIME . "($length)"
+                empty($length) ? self::DATA_TYPE_DATETIME : self::DATA_TYPE_DATETIME . "($length)"
             );
             $this->setColumns($tmp);
         }
@@ -437,7 +432,7 @@ class RawQuery extends BaseQuery
     public function timestamp(string $name): ?Column
     {
         if (!empty($name)) {
-            $tmp = new Column($name, RawQuery::DATA_TYPE_TIMESTAMP);
+            $tmp = new Column($name, self::DATA_TYPE_TIMESTAMP);
             $this->setColumns($tmp);
         }
 
@@ -452,7 +447,7 @@ class RawQuery extends BaseQuery
      *
      * @return void
      */
-    public function timestamps($created = "created_at", $updated = "updated_at"): void
+    public function timestamps($created = "created_time", $updated = "updated_time"): void
     {
         if (!empty($created)) {
             $this->timestamp($created)->default('CURRENT_TIMESTAMP', false)->nullable();
@@ -464,9 +459,9 @@ class RawQuery extends BaseQuery
     }
 
 
-
-    //<<----------->> alteration raw query in future update<<----------->>//
-
+    /*<<----------->> alteration raw query in future update <<----------->>
+    
+    
     public function dropColumn(string $name): ?Column
     {
         if (!empty($name)) {
@@ -513,18 +508,14 @@ class RawQuery extends BaseQuery
     }
 
 
-    /*
-    alteration for add and drop for:
-        drop column
-        renameColumn
-            drop primaryKey
-            drop foreign key
-            drop unique
-            drop index
+    // alteration for add and drop for:
+    //     drop column
+    //     renameColumn
+    //         drop primaryKey
+    //         drop foreign key
+    //         drop unique
+    //         drop index
 
-    
-    
-    */
     // $table->dropForeign('posts_user_id_foreign');
     // $table->dropIndex('geo_state_index');
     // $table->dropPrimary('users_id_primary');
@@ -539,10 +530,13 @@ class RawQuery extends BaseQuery
     public function dropColum(string $name): void
     {
         if (!empty($name)) {
-            $tmp = new Column($name, RawQuery::ALTER_DROP_COLUMN_TYPE);
+            $tmp = new Column($name,
+                self::ALTER_DROP_COLUMN_TYPE
+            );
             $this->setColumns($tmp);
         }
     }
 
-    //<<-----X----->> alteration raw query in future update<<-----X----->>//
+    
+    <<-----X----->> alteration raw query in future update <<-----X----->>*/
 }

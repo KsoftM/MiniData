@@ -4,11 +4,12 @@ namespace ksoftm\system;
 
 use Closure;
 use Exception;
-use PDOException;
+use ksoftm\system\MDQ;
 use ksoftm\system\database\Query;
 use ksoftm\system\internal\ITable;
 use ksoftm\system\internal\DResult;
 use ksoftm\system\database\QueryBuilder;
+
 
 class DB implements ITable
 {
@@ -63,14 +64,14 @@ class DB implements ITable
     public static function transaction(Closure $transaction): bool
     {
         try {
-            DB::beginTransaction();
+            self::beginTransaction();
 
             if (!is_null($transaction)) {
                 $transaction();
             }
 
-            DB::commit();
-        } catch (PDOException $e) {
+            self::commit();
+        } catch (Exception $e) {
             return false;
         }
 
@@ -82,15 +83,15 @@ class DB implements ITable
         return MDQ::getPDO()->inTransaction();
     }
 
-    public static function beginTransaction(string $isolationLevel = DB::TRANSACTION_READ_SERIALIZABLE): bool
+    public static function beginTransaction(string $isolationLevel = self::TRANSACTION_READ_SERIALIZABLE): bool
     {
         if (in_array($isolationLevel, [
-            DB::TRANSACTION_READ_UNCOMMITTED,
-            DB::TRANSACTION_READ_COMMITTED,
-            DB::TRANSACTION_REPEATABLE_READ,
-            DB::TRANSACTION_READ_SERIALIZABLE,
+            self::TRANSACTION_READ_UNCOMMITTED,
+            self::TRANSACTION_READ_COMMITTED,
+            self::TRANSACTION_REPEATABLE_READ,
+            self::TRANSACTION_READ_SERIALIZABLE,
         ])) {
-            DB::query("set transaction isolation level $isolationLevel");
+            self::query("set transaction isolation level $isolationLevel");
             MDQ::getPDO()->beginTransaction();
             return true;
         } else {
@@ -108,7 +109,7 @@ class DB implements ITable
     public static function setAutoCommit(bool $autoCommit = true): bool
     {
         $autoCommit = $autoCommit == true ?: 0;
-        return DB::query("set auto_commit = $autoCommit");
+        return self::query("set auto_commit = $autoCommit");
     }
 
     public static function rollback(): bool

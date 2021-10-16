@@ -4,6 +4,7 @@ namespace ksoftm\system\internal;
 
 use ksoftm\system\utils\datatype\Dictionary;
 
+
 class Column
 {
     public Dictionary $argument;
@@ -87,8 +88,6 @@ class Column
     ): Column {
         if (empty($foreignKey)) return $this;
 
-        $this->unsigned();
-        $this->nullable();
         $d = new Dictionary;
         $d->add('mainKey', $this->argument->getValue('name'));
         $d->add('foreignKey', $foreignKey);
